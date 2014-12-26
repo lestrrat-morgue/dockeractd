@@ -44,15 +44,21 @@ An example handler shell script my look like this:
 ```bash
 #!/bin/bash
 
-event=$(jq -r .Event.Status)
+WORKFILE=/tmp/work.json
+cat > $WORKFILE
+
+event=$(jq -r .Event.Status $WORKFILE)
 if [ "$event" != "start" ]
+    rm -f $WORKFILE
     exit 0
 fi
 
-ip=$(jq -r .Container.NetworkSettings.IPAddress)
+ip=$(jq -r .Container.NetworkSettings.IPAddress $WORKFILE)
 if [ "$ip" != "null" ]; then
     echo "Container's IP is $ip"
 fi
+
+rm -f $WORKFILE
 ```
 
 This just prints out the IP address of the newly started container.
