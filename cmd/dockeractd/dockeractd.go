@@ -8,6 +8,8 @@ import (
 	"github.com/lestrrat/dockeractd"
 )
 
+const version = "0.0.1"
+
 func main() {
 	os.Exit(_main())
 }
