@@ -3,7 +3,7 @@ package dockeractd
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"os/signal"
@@ -131,7 +131,7 @@ func (d *Dockeractd) Run() error {
 		// wait for events
 		events := make(chan *dockerapi.APIEvents)
 		if err = d.client.AddEventListener(events); err != nil {
-			println(err) // TODO LATER
+			log.Printf("Error receiving events: %s", err)
 			continue
 		}
 
@@ -157,7 +157,9 @@ func (d *Dockeractd) attachToDocker() error {
 	var client *dockerapi.Client
 	var err error
 
+	log.Printf("Attaching to %s", d.endpoint)
 	if d.tlsVerify {
+		log.Printf("Enabling TLS...")
 		client, err = dockerapi.NewTLSClient(
 			d.endpoint,
 			d.tlsCertFile,
@@ -169,7 +171,7 @@ func (d *Dockeractd) attachToDocker() error {
 	}
 
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "err =%s\n", err)
+		log.Printf("err =%s\n", err)
 		return err
 	}
 
