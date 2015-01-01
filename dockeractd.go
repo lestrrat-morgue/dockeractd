@@ -146,7 +146,9 @@ func (d *Dockeractd) Run() error {
 					loop = false
 					break INNER
 				}
-				d.process(ev)
+				if err := d.process(ev); err != nil {
+					log.Printf("Error executing script: %s", err)
+				}
 			}
 		}
 	}
@@ -200,6 +202,8 @@ func (d *Dockeractd) process(ev *dockerapi.APIEvents) error {
 	enc := json.NewEncoder(buf)
 	enc.Encode(payload)
 
-	cmd.Run()
+	if err := cmd.Run(); err != nil {
+		return err
+	}
 	return nil
 }
